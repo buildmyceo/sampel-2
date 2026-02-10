@@ -1,15 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Safely retrieve API key to prevent "process is not defined" crashes in browser environments
+// Safely retrieve API key. 
+// In Vite/Build environments, process.env.API_KEY is replaced with the string literal.
 const getApiKey = () => {
   try {
-    if (typeof process !== 'undefined' && process.env) {
-      return process.env.API_KEY || '';
-    }
+    // @ts-ignore - process.env.API_KEY is replaced by Vite at build time
+    return process.env.API_KEY || '';
   } catch (e) {
-    // Ignore error if process is not defined
+    return '';
   }
-  return '';
 };
 
 const apiKey = getApiKey();
