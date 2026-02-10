@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X, Home, PieChart, User, Globe } from 'lucide-react';
+import React from 'react';
+import { Home, PieChart, User, Globe, Wallet } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
@@ -10,56 +10,71 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const navItems = [
     { id: 'home', label: 'Discover', icon: <Globe size={18} /> },
     { id: 'insights', label: 'AI Insights', icon: <PieChart size={18} /> },
-    { id: 'dashboard', label: 'Dashboard', icon: <User size={18} /> },
+    { id: 'dashboard', label: 'Portfolio', icon: <User size={18} /> },
   ];
 
   return (
-    <nav className="fixed bottom-4 left-4 right-4 md:top-0 md:bottom-auto md:left-0 md:right-0 z-50">
-      {/* Desktop Nav */}
-      <div className="hidden md:flex justify-between items-center px-8 py-4 glass-panel rounded-b-xl md:rounded-none md:border-b border-gray-200 bg-white/80">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('home')}>
-          <div className="w-8 h-8 bg-electricBlue rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
-             <Home className="text-white" size={20} />
+    <>
+      {/* Desktop Navigation - Floating Island */}
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:flex items-center gap-2 p-1.5 rounded-full glass-card bg-white/80 shadow-xl shadow-slate-200/50 ring-1 ring-slate-900/5 transition-all duration-300 hover:ring-slate-900/10">
+        
+        {/* Logo Section */}
+        <div className="pl-4 pr-6 flex items-center gap-2 border-r border-slate-200 cursor-pointer" onClick={() => setActiveTab('home')}>
+          <div className="w-8 h-8 bg-gradient-to-br from-primary to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+             <span className="font-display font-bold text-white text-lg">N</span>
           </div>
-          <span className="text-xl font-bold tracking-tight text-gray-900">NEXUS</span>
+          <span className="font-display font-bold text-slate-800 tracking-wide">NEXUS</span>
         </div>
 
-        <div className="flex gap-8">
+        {/* Links */}
+        <div className="flex items-center gap-1">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                activeTab === item.id ? 'text-electricBlue' : 'text-gray-500 hover:text-gray-900'
+              className={`relative px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                activeTab === item.id 
+                  ? 'text-slate-900 bg-slate-100 shadow-sm ring-1 ring-slate-200' 
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
-              {item.icon}
-              {item.label}
+              <div className="flex items-center gap-2 relative z-10">
+                {item.icon}
+                {item.label}
+              </div>
             </button>
           ))}
         </div>
 
-        <button className="bg-gray-900 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200">
-          Connect Wallet
-        </button>
-      </div>
+        {/* Wallet Connect */}
+        <div className="pl-2 pr-1.5">
+          <button className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">
+            <Wallet size={16} />
+            <span>Connect</span>
+          </button>
+        </div>
+      </nav>
 
-      {/* Mobile Nav */}
-      <div className="md:hidden glass-panel rounded-2xl px-6 py-4 flex justify-between items-center shadow-xl shadow-gray-200">
-         {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center gap-1 transition-colors ${
-                activeTab === item.id ? 'text-electricBlue' : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              {item.icon}
-              <span className="text-[10px] uppercase tracking-wider">{item.label}</span>
-            </button>
-          ))}
+      {/* Mobile Navigation - Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 md:hidden z-50 glass-nav pb-safe border-t border-slate-200 bg-white/90">
+        <div className="flex justify-around items-center p-4">
+           {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`flex flex-col items-center gap-1 transition-all duration-300 ${
+                  activeTab === item.id ? 'text-primary' : 'text-slate-400'
+                }`}
+              >
+                <div className={`p-2 rounded-xl ${activeTab === item.id ? 'bg-primary/10' : ''}`}>
+                  {item.icon}
+                </div>
+                <span className="text-[10px] font-medium tracking-wide">{item.label}</span>
+              </button>
+            ))}
+        </div>
       </div>
-    </nav>
+    </>
   );
 };
 

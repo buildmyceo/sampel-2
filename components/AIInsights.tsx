@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { Sparkles, Map } from 'lucide-react';
+import { Sparkles, Map, TrendingUp } from 'lucide-react';
 import { getMarketInsights } from '../services/geminiService';
 
 const data = [
@@ -14,48 +14,78 @@ const data = [
 ];
 
 const AIInsights: React.FC = () => {
-  const [insight, setInsight] = useState<string>('Loading market analysis...');
+  const [insight, setInsight] = useState<string>('Initializing neural networks for market analysis...');
 
   useEffect(() => {
-    // Mocking an initial load of general market data
     getMarketInsights('Global Market').then(setInsight);
   }, []);
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Sparkles className="text-electricBlue" size={24} />
-        <h2 className="text-2xl font-bold text-gray-900">AI Market Intelligence</h2>
+    <div className="w-full space-y-8">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 shadow-sm">
+          <Sparkles className="text-primary" size={24} />
+        </div>
+        <div>
+          <h2 className="text-3xl font-display font-bold text-slate-900">Market Intelligence</h2>
+          <p className="text-slate-500">Predictive analytics powered by Gemini 3.0</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}
-        <div className="lg:col-span-2 glass-panel p-6 rounded-3xl border border-gray-200 bg-white">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-medium text-gray-700">Market Appreciation Trend</h3>
-            <select className="bg-gray-50 text-xs text-gray-900 p-2 rounded-lg border border-gray-200 outline-none">
-              <option>Last 6 Months</option>
-              <option>Last Year</option>
-              <option>5 Years</option>
-            </select>
+        <div className="lg:col-span-2 glass-card p-8 rounded-[2rem] bg-white">
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <TrendingUp size={20} className="text-green-500" />
+              Appreciation Forecast
+            </h3>
+            <div className="flex bg-slate-100 rounded-lg p-1 border border-slate-200">
+              {['1Y', '3Y', '5Y'].map((opt, i) => (
+                <button key={opt} className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${i === 0 ? 'bg-white text-slate-900 shadow' : 'text-slate-500 hover:text-slate-700'}`}>
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-                <XAxis dataKey="name" stroke="#9ca3af" tick={{fill: '#6b7280', fontSize: 12}} />
-                <YAxis stroke="#9ca3af" tick={{fill: '#6b7280', fontSize: 12}} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                  itemStyle={{ color: '#111827' }}
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                <XAxis 
+                  dataKey="name" 
+                  stroke="#94a3b8" 
+                  tick={{fill: '#64748b', fontSize: 12, fontWeight: 500}} 
+                  tickLine={false}
+                  axisLine={false}
+                  dy={10}
                 />
-                <Area type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                <YAxis 
+                  stroke="#94a3b8" 
+                  tick={{fill: '#64748b', fontSize: 12, fontWeight: 500}} 
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => `$${value/1000}k`}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', color: '#0f172a' }}
+                  itemStyle={{ color: '#2563eb' }}
+                  cursor={{ stroke: '#cbd5e1', strokeWidth: 2 }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#3b82f6" 
+                  strokeWidth={3} 
+                  fillOpacity={1} 
+                  fill="url(#colorValue)" 
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -64,26 +94,31 @@ const AIInsights: React.FC = () => {
         {/* Sidebar Insights */}
         <div className="space-y-6">
            {/* Growth Heatmap (Visual Rep) */}
-           <div className="glass-panel p-6 rounded-3xl border border-gray-200 bg-white relative overflow-hidden h-48 shadow-sm">
-              <div className="flex items-center gap-2 mb-2 text-gray-700 relative z-10">
-                <Map size={18} />
-                <h3 className="text-sm font-medium">Growth Heatmap</h3>
-              </div>
-              <div className="absolute inset-0 top-12 opacity-50 bg-[url('https://picsum.photos/400/300?grayscale')] bg-cover bg-center mix-blend-overlay"></div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-red-500 rounded-full blur-[50px] opacity-20"></div>
-              <div className="absolute bottom-4 left-4 right-4 z-10">
-                 <p className="text-xs text-gray-500">High activity detected in:</p>
-                 <p className="text-gray-900 font-bold">Neo City, Downtown Sector</p>
+           <div className="glass-card p-6 rounded-[2rem] relative overflow-hidden h-56 group bg-white">
+              <div className="absolute inset-0 bg-[url('https://picsum.photos/400/300?grayscale')] bg-cover bg-center opacity-90 group-hover:scale-105 transition-transform duration-700"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+              
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div className="flex items-center gap-2 text-white/90">
+                  <Map size={18} />
+                  <h3 className="text-sm font-bold uppercase tracking-wider">Hot Zone</h3>
+                </div>
+                
+                <div>
+                   <p className="text-xs text-white/70 mb-1">Highest Activity</p>
+                   <p className="text-white font-display text-2xl font-bold">Neo City</p>
+                   <p className="text-green-400 text-sm font-mono mt-1">+14.2% YoY</p>
+                </div>
               </div>
            </div>
 
            {/* AI Summary */}
-           <div className="glass-panel p-6 rounded-3xl border border-blue-100 bg-blue-50/50">
-              <div className="flex items-center gap-2 mb-3">
-                 <Sparkles size={16} className="text-electricBlue" />
-                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">AI Forecast</h3>
+           <div className="glass-card p-8 rounded-[2rem] border-blue-100 bg-blue-50/50">
+              <div className="flex items-center gap-3 mb-4">
+                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                 <h3 className="text-sm font-bold text-primary uppercase tracking-wider">Gemini Live Output</h3>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed font-light">
                 {insight}
               </p>
            </div>

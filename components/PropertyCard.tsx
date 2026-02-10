@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Property } from '../types';
-import { Heart, TrendingUp, Maximize2, MapPin, ArrowRight } from 'lucide-react';
+import { Heart, TrendingUp, Maximize2, MapPin, Sparkles, ArrowRight } from 'lucide-react';
 import { getInvestmentAdvice } from '../services/geminiService';
 
 interface PropertyCardProps {
@@ -24,78 +24,91 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onOpenTour, onSav
   };
 
   return (
-    <div className="group relative bg-white border border-gray-100 rounded-3xl overflow-hidden hover:border-electricBlue/30 transition-all duration-300 hover:shadow-xl hover:shadow-blue-900/5 shadow-sm">
+    <div className="group relative bg-white border border-slate-200 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1">
       
       {/* Image Container */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-72 overflow-hidden">
         <img 
           src={property.image} 
           alt={property.title} 
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-90" />
         
-        <div className="absolute top-4 right-4 flex gap-2">
-           <button 
-             onClick={() => onSave(property.id)}
-             className={`p-2 rounded-full backdrop-blur-md border border-white/20 transition-colors ${isSaved ? 'bg-white text-red-500 shadow-md' : 'bg-black/30 text-white hover:bg-black/50'}`}
-           >
-             <Heart size={18} fill={isSaved ? "currentColor" : "none"} />
-           </button>
+        {/* Floating Badges */}
+        <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+           {property.isTrending && (
+             <div className="px-3 py-1.5 bg-white/90 backdrop-blur-md border border-white/50 text-blue-600 text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
+               <TrendingUp size={12} /> <span className="tracking-wider">TRENDING</span>
+             </div>
+           )}
+           <div className="ml-auto flex gap-2">
+             <button 
+               onClick={() => onSave(property.id)}
+               className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-300 shadow-sm ${isSaved ? 'bg-white text-red-500 border-red-100' : 'bg-white/90 text-slate-700 border-white/50 hover:bg-white hover:text-red-500'}`}
+             >
+               <Heart size={18} fill={isSaved ? "currentColor" : "none"} />
+             </button>
+             <button 
+               onClick={() => onOpenTour(property)}
+               className="w-10 h-10 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-md border border-white/50 text-slate-700 hover:bg-white transition-all duration-300 shadow-sm"
+             >
+               <Maximize2 size={18} />
+             </button>
+           </div>
         </div>
 
-        {property.isTrending && (
-          <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur text-electricBlue text-xs font-bold rounded-full flex items-center gap-1 shadow-sm">
-            <TrendingUp size={12} /> TRENDING
-          </div>
-        )}
-
-        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-           <div>
-             <h3 className="text-xl font-bold text-white drop-shadow-md">{property.title}</h3>
-             <div className="flex items-center text-white/90 text-sm mt-1 drop-shadow-md">
-               <MapPin size={14} className="mr-1" />
-               {property.location}
-             </div>
+        {/* Overlay Content */}
+        <div className="absolute bottom-4 left-6 right-6">
+           <div className="flex items-center text-white/90 text-xs font-medium uppercase tracking-wider mb-2">
+             <MapPin size={12} className="mr-1 text-blue-400" />
+             {property.location}
            </div>
-           <button 
-             onClick={() => onOpenTour(property)}
-             className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-white border border-white/20 transition-colors"
-           >
-             <Maximize2 size={18} />
-           </button>
+           <h3 className="font-display text-2xl font-bold text-white mb-1 leading-tight">{property.title}</h3>
+           <p className="text-white/80 text-sm">{property.beds} Beds • {property.baths} Baths • {property.sqft.toLocaleString()} sqft</p>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="p-5 space-y-4">
-        <div className="grid grid-cols-3 gap-2">
-          <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Yield</p>
-            <p className="text-electricBlue font-bold">{property.rentalYield}%</p>
+      {/* Stats Grid */}
+      <div className="p-6 pt-4 space-y-5">
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center transition-colors group-hover:bg-blue-50/50">
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Yield</p>
+            <p className="text-blue-600 font-bold font-mono">{property.rentalYield}%</p>
           </div>
-          <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Growth</p>
-            <p className="text-green-600 font-bold">+{property.appreciation}%</p>
+          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center transition-colors group-hover:bg-blue-50/50">
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Growth</p>
+            <p className="text-green-600 font-bold font-mono">+{property.appreciation}%</p>
           </div>
-          <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">Price</p>
-            <p className="text-gray-900 font-bold">${(property.price / 1000).toFixed(0)}k</p>
+          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center transition-colors group-hover:bg-blue-50/50">
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Ask</p>
+            <p className="text-slate-900 font-bold font-mono">${(property.price / 1000).toFixed(0)}k</p>
           </div>
         </div>
 
-        {/* AI Quick Insight */}
-        <div className="relative">
+        {/* AI Insight Section */}
+        <div className="relative group/ai">
           <button 
              onClick={handleAiAnalyze}
-             className="w-full py-2 text-xs flex items-center justify-center gap-2 text-gray-500 hover:text-electricBlue transition-colors font-medium"
+             className="w-full py-3 rounded-xl border border-dashed border-slate-300 hover:border-blue-400 hover:bg-blue-50 transition-all text-xs flex items-center justify-center gap-2 text-slate-500 hover:text-blue-600 font-medium"
           >
-             {loadingAdvice ? 'Analyzing...' : aiAdvice ? 'View Analysis' : 'Ask AI Advisor'}
-             {!aiAdvice && !loadingAdvice && <ArrowRight size={12} />}
+             <Sparkles size={14} className={loadingAdvice ? "animate-spin" : ""} />
+             {loadingAdvice ? 'Processing Data...' : aiAdvice ? 'Update Analysis' : 'Generate AI Risk Assessment'}
           </button>
+          
           {aiAdvice && (
-             <div className="mt-2 p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-gray-600 leading-relaxed animate-fadeIn">
-               <span className="text-electricBlue font-bold mr-1">AI:</span> {aiAdvice}
+             <div className="mt-3 p-4 bg-blue-50 border border-blue-100 rounded-xl animate-fade-in-up">
+               <div className="flex items-start gap-3">
+                 <div className="mt-1 min-w-[20px]">
+                   <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center">
+                     <Sparkles size={10} className="text-primary" />
+                   </div>
+                 </div>
+                 <p className="text-sm text-slate-600 leading-relaxed font-light">
+                   <span className="font-bold text-slate-900 block mb-1">Gemini Analysis</span>
+                   {aiAdvice}
+                 </p>
+               </div>
              </div>
           )}
         </div>
