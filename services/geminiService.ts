@@ -1,22 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Safely retrieve API key. 
-// In Vite/Build environments, process.env.API_KEY is replaced with the string literal.
-const getApiKey = () => {
-  try {
-    // @ts-ignore - process.env.API_KEY is replaced by Vite at build time
-    return process.env.API_KEY || '';
-  } catch (e) {
-    return '';
-  }
-};
+// Access the API key. Vite will replace `process.env.API_KEY` with the actual string.
+// If not replaced (e.g. env var missing), it might fallback to undefined, so we handle that.
+// We use a temporary variable to avoid any runtime 'process' reference issues.
+const API_KEY_VALUE = process.env.API_KEY as string | undefined;
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: API_KEY_VALUE || 'dummy-key-for-init' });
 
 export const getMarketInsights = async (location: string): Promise<string> => {
-  if (!apiKey) {
-    return "AI Insights require an API Key. Market data for this area suggests a strong upward trend with a 15% increase in demand over the last quarter.";
+  if (!API_KEY_VALUE) {
+    return "AI Insights require an API Key (configured in Vercel). Market data for this area suggests a strong upward trend.";
   }
 
   try {
@@ -32,8 +25,8 @@ export const getMarketInsights = async (location: string): Promise<string> => {
 };
 
 export const getInvestmentAdvice = async (propertyTitle: string, price: number, yieldPct: number): Promise<string> => {
-  if (!apiKey) {
-    return `Based on current metrics, ${propertyTitle} shows promising potential with a ${yieldPct}% yield. Consider long-term hold strategies.`;
+  if (!API_KEY_VALUE) {
+    return `Based on current metrics, ${propertyTitle} shows promising potential with a ${yieldPct}% yield.`;
   }
 
   try {
